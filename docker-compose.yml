@@ -1,0 +1,38 @@
+# docker-compose.yml
+
+services:
+  # ── API FastAPI ───────────────────────────────────────────────────────────
+  api:
+    build: .
+    container_name: vision-api
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8001 --reload
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+      - repo_storage:/app/repository/storage
+      - hf_cache:/root/.cache/huggingface 
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    
+
+  # ── Streamlit ─────────────────────────────────────────────────────────────
+  streamlit:
+    build: .
+    container_name: vision-streamlit
+    command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+      - hf_cache:/root/.cache/huggingface 
+    environment:
+      - STREAMLIT_API_URL=http://api:8001
+      - PYTHONPATH=/app   
+    depends_on:
+      - api
+
+volumes:
+  ollama_data:
+  repo_storage:
+  hf_cache:
