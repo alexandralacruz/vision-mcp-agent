@@ -4,6 +4,38 @@ Agente de búsqueda de imágenes por memoria visual usando CLIP, BLIP VQA, Ollam
 
 Describe lo que recuerdas haber visto en una imagen y el sistema la encuentra por similitud semántica usando embeddings CLIP.
 
+El "MCP Client" está en agent/agent.py
+
+ El proyecto tiene dos componentes MCP separados:
+
+ ### 1. Cliente MCP → agent/agent.py (clase VisionAgent)
+
+ El cliente MCP está integrado directamente en el agente. La clase VisionAgent en agent/agent.py actúa como       
+ cliente MCP de la siguiente manera:
+
+ - Define las herramientas disponibles (clip_search, vqa_query, list_repository, get_image_info) en la variable TOOLS.
+ - Implementa un loop: envía el prompt + herramientas a Ollama → Ollama decide qué herramienta llamar → el agente ejecuta el handler → devuelve el    
+   resultado a Ollama → repite hasta obtener respuesta final.
+ - Los handlers (_build_handlers()) no se conectan al MCP server — llaman directamente al repositorio y modelos (CLIP, BLIP).
+
+ ### 2. Servidor MCP → mcp_server/server.py
+
+ Es un servidor MCP independiente que expone las mismas herramientas usando el protocolo MCP estándar (via stdio). Está pensado para que clientes MCP 
+ externos (como Claude Desktop) se conecten a él.
+
+ ### Resumen de la arquitectura:
+
+ ```
+   Usuario → API (api/main.py) → VisionAgent (agent/agent.py)
+                                      ├── Ollama (LLM)
+                                      └── Handlers directos → Repository / CLIP / BLIP
+
+   [Externo] → mcp_server/server.py (stdio MCP server)
+                   └── Herramientas expuestas via protocolo MCP estándar
+ ```
+
+ En resumen: el cliente MCP no está en un archivo separado; está embebido en agent/agent.py como parte de la clase VisionAgent, que hace de puente    
+ entre Ollama y las herramientas de búsqueda visual.
 ---
 
 ## 🏗️ Arquitectura
@@ -237,3 +269,11 @@ Toda la configuración está en `.env` y `config/settings.py`:
 **Timeout al indexar (error 500)**
 → Los modelos en CPU son lentos. Aumenta el timeout en el código o usa `--timeout 900` en batch_index.
 
+
+**Para limpiar el volumen de las imágenes:**
+ → 
+ ```bash
+   docker-compose -f src/mcp/vision-mcp-agent/docker-compose.yml down       
+   docker volume rm vision-mcp-agent_repo_storage
+   docker-compose -f src/mcp/vision-mcp-agent/docker-compose.yml up -d      
+ ```

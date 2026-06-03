@@ -160,7 +160,7 @@ async def list_tools() -> list[Tool]:
     ]
 
 
-# ── Implementación de herramientas ───────────────────────────────────────────
+#  Implementación de herramientas 
 
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageContent]:
@@ -168,7 +168,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
 
     repo = get_repository()
 
-    # ── clip_search ──────────────────────────────────────────────────────────
+    #  clip_search 
     if name == "clip_search":
         query = arguments["query"]
         top_k = arguments.get("top_k", 5)
@@ -211,7 +211,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
             }, ensure_ascii=False, indent=2),
         )]
 
-    # ── vqa_query ────────────────────────────────────────────────────────────
+    #  vqa_query 
     elif name == "vqa_query":
         image_id = arguments["image_id"]
         question = arguments["question"]
@@ -239,7 +239,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
             }, ensure_ascii=False),
         )]
 
-    # ── search_by_image ──────────────────────────────────────────────────────
+    #  search_by_image 
     elif name == "search_by_image":
         import io
         from PIL import Image
@@ -278,7 +278,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
             }, ensure_ascii=False, indent=2),
         )]
 
-    # ── list_repository ──────────────────────────────────────────────────────
+    #  list_repository 
     elif name == "list_repository":
         limit = arguments.get("limit", 20)
         offset = arguments.get("offset", 0)
@@ -305,7 +305,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
             }, ensure_ascii=False, indent=2),
         )]
 
-    # ── get_image_info ───────────────────────────────────────────────────────
+    #  get_image_info 
     elif name == "get_image_info":
         image_id = arguments["image_id"]
         meta = repo.get_image(image_id)
@@ -331,7 +331,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent | ImageConte
         )]
 
 
-# ── Punto de entrada ─────────────────────────────────────────────────────────
+#  Punto de entrada 
 
 async def main():
     logger.info(f"Iniciando servidor MCP '{settings.MCP_SERVER_NAME}'...")
