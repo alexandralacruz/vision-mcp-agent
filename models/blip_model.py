@@ -58,7 +58,7 @@ class BLIPWrapper:
         self._initialized = True
         logger.info("BLIP VQA cargado exitosamente.")
 
-    # ── VQA ────────────────────────────────────────────────────────────────
+    # VQA 
 
     def answer_question(
         self,

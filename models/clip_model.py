@@ -43,7 +43,7 @@ class CLIPWrapper:
         self._initialized = True
         logger.info("CLIP cargado exitosamente.")
 
-    # ── Embeddings de imagen ────────────────────────────────────────────────
+    #  Embeddings de imagen 
 
     def embed_image(self, image: Union[Image.Image, Path, str]) -> np.ndarray:
         """
@@ -61,7 +61,7 @@ class CLIPWrapper:
 
         return features.cpu().numpy().astype(np.float32).flatten()
 
-    # ── Embeddings de texto ─────────────────────────────────────────────────
+    #  Embeddings de texto 
 
     def embed_text(self, text: str) -> np.ndarray:
         """
@@ -82,7 +82,7 @@ class CLIPWrapper:
 
         return features.cpu().numpy().astype(np.float32).flatten()
 
-    # ── Similitud ───────────────────────────────────────────────────────────
+    #  Similitud 
 
     def cosine_similarity(self, vec_a: np.ndarray, vec_b: np.ndarray) -> float:
         """Similitud coseno entre dos vectores ya normalizados."""
