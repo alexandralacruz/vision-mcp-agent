@@ -6,7 +6,7 @@ import os
 
 class Settings(BaseSettings):
     # ── Ollama ──────────────────────────────────────────────────────────────
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_BASE_URL: str = "http://host.docker.internal:11434"
     OLLAMA_MODEL: str = "qwen2.5:7b"          # Modelo con visión
     OLLAMA_TEMPERATURE: float = 0.1
     OLLAMA_MAX_TOKENS: int = 2048

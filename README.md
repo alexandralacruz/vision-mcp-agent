@@ -107,13 +107,16 @@ Instalá [Docker Desktop](https://www.docker.com/products/docker-desktop/) para 
 ### Opción A — Con Docker (recomendado)
 
 ```bash
-cd src/mcp/vision-mcp-agent
+cd vision-mcp-agent
 
 # Levantar API + Streamlit
 docker-compose up --build -d
 
 # Ver logs
 docker-compose logs -f api
+
+# Stop down API y borra imagnes de docker creadas elimina <none> images agrega -v al final si quieres eiminar el repositorio tambien
+docker compose down --rmi all 
 ```
 
 | Servicio | URL |

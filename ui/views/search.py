@@ -132,6 +132,11 @@ def render_search_page():
                         tool_calls = data.get("tool_calls", [])
                         iterations = data.get("iterations", 1)
 
+                        st.session_state.search_results = results                                
+                        st.session_state.agent_response = response_text                          
+                        st.session_state.agent_tool_calls = tool_calls
+                        st.session_state.agent_iterations = iterations
+                        st.session_state.last_search_type = "text"
                         # Respuesta del agente
                         if use_agent and response_text:
                             st.markdown("### 🤖 Respuesta del Agente")
@@ -168,6 +173,36 @@ def render_search_page():
                     st.error(f"❌ No se puede conectar a la API en {api_url}")
                 except Exception as e:
                     st.error(f"Error: {e}")
+        # --- Mostrar resultados guardados al volver de un rerun (ej. tras VQA) ---              
+        if not search_btn and st.session_state.get("search_results") and st.session_state.get("last_search_type") == "text":
+            results = st.session_state.search_results
+            response_text = st.session_state.get("agent_response", "")
+            tool_calls = st.session_state.get("agent_tool_calls", [])                            
+            iterations = st.session_state.get("agent_iterations", 1)
+
+            if use_agent and response_text:
+                st.markdown("### 🤖 Respuesta del Agente")                                       
+                st.markdown(
+                     f'<div class="agent-response">{response_text}</div>',
+                       unsafe_allow_html=True,                                                      
+                   )
+                if tool_calls:
+                    tools_html = "".join(
+                          f'<span class="tool-pill">🔧 {tc["tool"]}</span>'
+                          for tc in tool_calls
+                    )
+                    st.markdown(
+                          f"**Herramientas usadas ({iterations} iter.):** {tools_html}",
+                           unsafe_allow_html=True,                                                  
+                    )
+
+            st.markdown(f"### 📊 Resultados ({len(results)})")                                   
+            if results:
+                for i, result in enumerate(results):
+                    _render_result_card(result, api_url, i)
+            else:
+                st.info("No se encontraron imágenes que coincidan. Prueba con otra descripción.")
+           # -------------------------------------------------------------------------              
 
     # ── Búsqueda por imagen ───────────────────────────────────────────────────
     with tab_image:
